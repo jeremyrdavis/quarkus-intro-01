@@ -3,11 +3,9 @@ package com.redhat.devnexus;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.transaction.Transactional;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/greeting")
@@ -32,5 +30,24 @@ public class GreetingResource {
         return greeting;
     }
 
+    @PUT
+    @Path("/{id}")
+    @Transactional
+    public Greeting updateGreeting(@PathParam("id")Long id, final String udpatedValue) {
+
+        Greeting greeting = Greeting.findById(id);
+        greeting.setValue(udpatedValue);
+        greeting.persist();
+        return greeting;
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Transactional
+    public Response deleteGreeting(@PathParam("id") Long id) {
+        Greeting greetingToDelete = Greeting.findById(id);
+        greetingToDelete.delete();
+        return Response.ok().build();
+    }
 
 }
